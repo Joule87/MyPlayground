@@ -1,38 +1,110 @@
 import Foundation
-import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+protocol Component {
+    var baseValue: Int { get set }
+    func value() -> Int
+}
 
-let concurrentQueue = DispatchQueue(label: "com.queue.Concurrent", attributes: .concurrent)
-
-func performAsyncTaskIntoConcurrentQueue(with completion: @escaping () -> ()) {
-    let group = DispatchGroup()
-    for i in 1...5 {
-        concurrentQueue.async {
-            group.enter()
-            if Thread.isMainThread {
-                print("\(i) task running in main thread")
-            } else{
-                print("\(i) task running in other thread")
-            }
-
-            let imageURL = URL(string: "https://upload.wikimedia.org/wikipedia/commons/0/07/Huge_ball_at_Vilnius_center.jpg")!
-            let _ = try! Data(contentsOf: imageURL)
-            print("\(i) finished downloading")
-            group.leave()
-        }
-    }
-    group.notify(queue: DispatchQueue.main) {
-        completion()
+extension Component {
+    var baseValue: Int {
+        get { return 0 }
+        set { baseValue = newValue }
     }
 }
 
-print("###### Download all images asynchronously and notify on completion ######")
-print("############")
-print("############\n")
+class CompoundObject: Component {
+    var children = [Component]()
+    
+    func add(component: Component) {
+        children.append(component)
+    }
+    
+    func remove(component: Component) {
+        ///.....
+    }
+    
+    func value() -> Int {
+        let arrayValue = children.compactMap({ $0.value() })
+        let result  = arrayValue.reduce(0, +)
+        return result
+    }
+}
 
-performAsyncTaskIntoConcurrentQueue(with: {
-    print("\n############")
-    print("############")
-    print("###### All images are downloaded")
-})
+class Screw: Component {
+    var baseValue: Int
+    init(value: Int) {
+        baseValue = value
+    }
+    
+    func value() -> Int {
+        return baseValue
+    }
+}
+
+class Table: Component {
+    var baseValue: Int
+    init(value: Int) {
+        baseValue = value
+    }
+    
+    func value() -> Int {
+        return baseValue
+    }
+}
+
+class Glue: Component {
+    var baseValue: Int
+    init(value: Int) {
+        baseValue = value
+    }
+    
+    func value() -> Int {
+        return baseValue
+    }
+}
+
+class Plywood: Component {
+    var baseValue: Int
+    init(value: Int) {
+        baseValue = value
+    }
+    
+    func value() -> Int {
+        return baseValue
+    }
+}
+
+let door = CompoundObject()
+
+let screw1 = Screw(value: 1)
+let screw2 = Screw(value: 1)
+let screw3 = Screw(value: 1)
+let screw4 = Screw(value: 1)
+
+door.add(component: screw1)
+door.add(component: screw2)
+door.add(component: screw3)
+door.add(component: screw4)
+
+let plywood = Plywood(value: 5)
+door.add(component: plywood)
+
+let glue = Glue(value: 1)
+door.add(component: glue)
+
+let table = Table(value: 10)
+door.add(component: table)
+
+print("Door Value: \(door.value())")
+
+let giantShelfScrew1 = Screw(value: 5)
+let giantShelfScrew2 = Screw(value: 5)
+
+let shelf = CompoundObject()
+shelf.add(component: giantShelfScrew1)
+shelf.add(component: giantShelfScrew2)
+
+shelf.add(component: door)
+
+print("Shelf Value: \(shelf.value())")
+
