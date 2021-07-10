@@ -1,5 +1,6 @@
-//: [Previous](@previous)
-
-import UIKit
+import SwiftUI
 import Combine
 import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
+
