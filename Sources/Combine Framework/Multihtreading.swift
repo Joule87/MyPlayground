@@ -1,5 +1,3 @@
-//import Foundation
-//
 //import SwiftUI
 //import Combine
 //import PlaygroundSupport
@@ -10,7 +8,8 @@
 //
 //let sub = intSubject
 //    .map{ $0 * 10 } //some expensive work
-//    .receive(on: DispatchQueue.main)
+//    .subscribe(on: DispatchQueue.main) //everything upstream will be executed in main queue
+//    .receive(on: DispatchQueue.main) //everything downstream will be executed in main queue
 //    .sink { (value) in
 //        print("received value: \(value)")
 //        print("thread: \(Thread.current.description)")
