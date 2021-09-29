@@ -1,5 +1,6 @@
-import SwiftUI
-import Combine
-import PlaygroundSupport
+import Foundation
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+var mmm: Set<Int> = [1,2,3,4,5]
+
+
+print("\(mmm.sorted())")
