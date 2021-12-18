@@ -1,92 +1,116 @@
 import Foundation
 
-protocol Animal {
-    associatedtype FoodType
-    
-    var name: String { get }
-    
-    func walk()
-    func eat(food: FoodType)
+protocol Vehicle {
+    associatedtype E
+    associatedtype W
+
+    var engine: E { get set }
+    var wheel: W { get set }
+
+    func getInfo()
 }
 
-class Cow: Animal {
-
-    let name: String
-    
-    init(withName name: String) {
-        self.name = name
-    }
-    
-    func walk() {
-        print("\(name) is walking in the farm.")
-    }
-    
-    // Cow should eat grass
-    func eat(food: Grass) {
-        print("\(name) eat \(food.foodName)")
-    }
+protocol Engine {
+    var year: String { get set }
 }
 
-class Tiger: Animal {
-    
-    let name: String
-    
-    init(withName name: String) {
-        self.name = name
-    }
-    
-    func walk() {
-        print("\(name) is walking in the jungle.")
-    }
-    
-    // Tiger should eat meat
-    func eat(food: Meat) {
-        print("\(name) eat \(food.foodName)")
+struct InternalCombustion: Engine {
+    var year: String
+}
+
+struct ElectricEngine: Engine {
+    var year: String
+}
+
+protocol Wheel {
+    var info: String { get }
+}
+
+struct StandardWheel: Wheel {
+    var info: String {
+        return "quality ★★"
     }
 }
 
-struct Grass {
-    let foodName = "Grass"
+struct PremiumWheel: Wheel {
+    var info: String {
+        return "quality ★★★★★"
+    }
 }
 
-struct Meat {
-    let foodName = "Meat"
-}
+struct Car: Vehicle {
 
-struct AnyAnimal: Animal {
-    
-    let name: String
-    private let walker: () -> Void
-    private let eater: (Any) -> Void
-    
-    init<T: Animal>(_ animal: T) {
-        name = animal.name
-        
-        walker = {
-            animal.walk()
-        }
-        
-        eater = { food in
-            guard let f = food as? T.FoodType else { return }
-            animal.eat(food: f)
-        }
+    typealias E = Engine
+
+    typealias W = Wheel
+
+    var engine: E
+    var wheel: W
+
+    init(engine: Engine, wheel: Wheel) {
+        self.engine = engine
+        self.wheel = wheel
     }
-    
-    func walk() {
-        walker()
-    }
-    
-    func eat(food: Any) {
-        eater(food)
+
+    func getInfo() {
+        print("Engine of year \(engine.year) with wheels \(wheel.info)")
     }
 }
 
 
-let myTiger = Tiger(withName: "My Tiger")
-let myCow = Cow(withName: "My Cow")
-let animalArray: [AnyAnimal] = [AnyAnimal(myTiger), AnyAnimal(myCow)]
+struct Bus: Vehicle {
 
-animalArray.forEach { (animal) in
-    animal.walk()
-    animal.eat(food: Grass())
+    typealias E = Engine
+
+    typealias W = Wheel
+
+    var engine: E
+    var wheel: W
+
+    init(engine: Engine, wheel: Wheel) {
+        self.engine = engine
+        self.wheel = wheel
+    }
+
+    func getInfo() {
+        print("Engine of year \(engine.year) with wheels \(wheel.info)")
+    }
+}
+
+let electricEngine = ElectricEngine(year: "2021")
+let standardWheel = StandardWheel()
+
+let combustionEngine = InternalCombustion(year: "1992")
+let premiumWheel = PremiumWheel()
+
+let cityBus = Bus(engine: electricEngine, wheel: standardWheel)
+let ferrari = Car(engine: combustionEngine, wheel: premiumWheel)
+
+struct AnyVehicle<En, Wh> : Vehicle {
+    typealias E = En
+
+    typealias W = Wh
+
+    var engine: En
+    var wheel: Wh
+    private let info: () -> Void
+
+    init<V: Vehicle>(vehicle: V) where V.E == E, V.W == W {
+        engine = vehicle.engine
+        wheel = vehicle.wheel
+        info = vehicle.getInfo
+    }
+
+    func getInfo() {
+        info()
+    }
+}
+
+let anyCityBus = AnyVehicle(vehicle: cityBus)
+let anyFerrari = AnyVehicle(vehicle: ferrari)
+
+let cars: [AnyVehicle<Engine, Wheel>] = [anyCityBus, anyFerrari]
+
+cars.forEach { vehicle in
+    vehicle.getInfo()
 }

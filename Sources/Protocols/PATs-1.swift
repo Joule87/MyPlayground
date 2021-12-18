@@ -1,5 +1,4 @@
-//Example of using PATs as a type
-///https://leekahseng.medium.com/accomplishing-dynamic-dispatch-on-pats-protocol-with-associated-types-b29d1242e939
+///https://hasancanakgunduz.medium.com/type-erasure-in-swift-5086f764b33e
 
 //import Foundation
 //
@@ -25,8 +24,10 @@
 //    }
 //
 //    // Cow should eat grass
-//    func eat(food: Grass) {
-//        print("\(name) eat \(food.foodName)")
+//    func eat(food: Food) {
+//        if food is Grass {
+//            print("\(name) eat \(food.foodName)")
+//        }
 //    }
 //}
 //
@@ -43,53 +44,57 @@
 //    }
 //
 //    // Tiger should eat meat
-//    func eat(food: Meat) {
-//        print("\(name) eat \(food.foodName)")
+//    func eat(food: Food) {
+//        if food is Meat {
+//            print("\(name) eat \(food.foodName)")
+//        }
 //    }
 //}
 //
-//struct Grass {
-//    let foodName = "Grass"
+//struct Grass: Food {
+//    var foodName = "Grass"
 //}
 //
-//struct Meat {
-//    let foodName = "Meat"
+//struct Meat: Food {
+//    var foodName = "Meat"
 //}
 //
-//struct AnyAnimal: Animal {
+//protocol Food {
+//    var foodName: String { get set }
+//}
+//
+//struct AnyAnimal<F>: Animal {
+//
+//    typealias FoodType = F
 //
 //    let name: String
 //    private let walker: () -> Void
-//    private let eater: (Any) -> Void
+//    private let eater: (F) -> Void
 //
-//    init<T: Animal>(_ animal: T) {
+//    init<A: Animal>(_ animal: A) where A.FoodType == F {
 //        name = animal.name
-//
-//        walker = {
-//            animal.walk()
-//        }
-//
-//        eater = { food in
-//            guard let f = food as? T.FoodType else { return }
-//            animal.eat(food: f)
-//        }
+//        walker = animal.walk
+//        eater = animal.eat
 //    }
 //
 //    func walk() {
 //        walker()
 //    }
 //
-//    func eat(food: Any) {
+//    func eat(food: F) {
 //        eater(food)
 //    }
 //}
 //
-//
 //let myTiger = Tiger(withName: "My Tiger")
 //let myCow = Cow(withName: "My Cow")
-//let animalArray: [AnyAnimal] = [AnyAnimal(myTiger), AnyAnimal(myCow)]
 //
-//animalArray.forEach { (animal) in
+//let anyCow = AnyAnimal(myCow)
+//let anyTiger = AnyAnimal(myTiger)
+//
+//let animalArray: [AnyAnimal<Food>] = [anyTiger, anyCow]
+//
+//animalArray.forEach { animal in
 //    animal.walk()
-//    animal.eat(food: Grass())
+//    animal.eat(food: Meat())
 //}
