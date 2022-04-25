@@ -45,3 +45,21 @@
 //
 //lengthOfLongestSubstring("abcabcbb")
 
+///My other solution
+/////
+//class Solution {
+//  func lengthOfLongestSubstring(_ text: String) -> Int {
+//    if text.count < 2 { return text.count }
+//    var longest = 0
+//    var nonRepeatedCharacters: [Character] = []
+//      
+//    for character in text {
+//        if let index = nonRepeatedCharacters.index(of: character) {
+//            nonRepeatedCharacters.removeSubrange(0...index)
+//        }
+//        nonRepeatedCharacters.append(character)
+//        longest = max(longest, nonRepeatedCharacters.count)
+//    }
+//      return longest
+//  }
+//}

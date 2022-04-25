@@ -17,3 +17,20 @@
 //}
 //
 //reverse(-82342232)
+
+
+
+//class Solution {
+//    func reverse(_ x: Int) -> Int {
+//        let isNegative = x < 0 ? true : false
+//        let stringNumber = String(abs(x))
+//        var result = ""
+//        for number in stringNumber {
+//            result.insert(number, at: result.startIndex)
+//        }
+//        guard let resultNumber = Int(result), resultNumber > Int32.min, resultNumber < Int32.max else {
+//            return 0
+//        }
+//        return isNegative ? -1 * resultNumber : resultNumber
+//    }
+//}
