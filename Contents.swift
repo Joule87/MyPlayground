@@ -1,26 +1,20 @@
 import Foundation
 
-func bubbleSort(arr: [Int]) -> [Int] {
-    var newArray = arr
-    var round = 0
-    
-    var currentLength: Int {
-        return newArray.count - round
-    }
-    for _ in 0..<currentLength {
-        for i in 0..<currentLength - 1 {
-            if newArray[i] > newArray [i+1] {
-                newArray.swapAt(i+1,i)
-            }
-        }
-        round += 1
-    }
-    return newArray
+
+var arr = [3,5,4,9,6,1,2]
+var arr1 = [17,-2,1,8,6,6,5,4]
+var arr2 = [33,23,44,5,522]
+
+func sort(arr: inout [Int]) {
+   
 }
 
-let test1 = [7,4,3,8,9,0,1,00]
-let test2 = [7,4,3,8,9,0,1,00]
 
-var a = bubbleSort(arr: test1)
-print(a)
+func swapAt(arr: inout [Int], _ i: Int, _ j: Int) {
+    let temporal = arr[i]
+    arr[i] = arr[j]
+    arr[j] = temporal
+}
 
+sort(arr: &arr1)
+print(arr1)
